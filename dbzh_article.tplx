@@ -1,0 +1,372 @@
+((= 
+===========================================================================================
+Name : dbzh_article
+Author: D. P Tweed
+Date : Feb, 2017
+------------------------------
+
+# Overview
+------------------------------
+This template is based on multiple original templates found in ~/anaconda/lib/python2.7/site-packages/nbconvert/templates/latex, namely
+* base.tplx
+* article.tplx
+* style_ipython.tplx
+
+# List of options and arguements:
+-------------------------------
+
+## To be applied in the notebook metadata
+
+
+* Document metadata to change title, author, date and affiliation
+ (see  'display_latex_metadata.tplx')
+
+"latex_metadata": {
+   "affiliation": "[Insert affiliation here]",
+   "title": "[Insert title here]",
+   "subtitle": "[Insert title here]",
+   "author": "[Insert name here]",
+   "date": "[Insert date here]",
+   "abstract":"[Inset abstract here]",
+   "keywords":"[Inset keywords here]",
+   "bibfile":"[Insert file.bib]",
+   "bibfile":"[Choose bibliography style]"s
+}
+
+
+## To be applied in the cell metadata
+
+* hide Markdown cell
+"hide":true
+
+* show input output code cells
+"show":true
+
+* options for figure and table ('text/latex')
+"width":"[either user defined maximum length or specified in cm, in...]"
+"height":"[either user defined maximum height or specified in cm, in...]"
+"caption":"[Insert caption here]",
+"label":"[unique]"
+"wide":true
+
+===========================================================================================
+=))
+
+
+((*- extends 'display_latex_metadata.tplx' -*))
+
+%===============================================================================
+% Abstract overrides
+%===============================================================================
+
+((* block header *))
+    ((= DOCUMENT CLASS: Change article to other class or change option [11pt] if needed =))
+    ((* block docclass *))
+\documentclass[11pt]{article} % comment to switch to two columns
+%\documentclass[11pt,twocolumn]{article} % uncomment to switch to two columns
+    ((* endblock docclass *))
+    
+    ((= LATEX PACKAGES: Add or remove as need some class may already call some packages =))
+    ((* block packages *))
+\usepackage[T1]{fontenc}
+% Nicer default font than Computer Modern for most use cases
+\usepackage{palatino}
+
+% Basic figure setup, for now with no caption control since it's done
+% automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+\usepackage{graphicx}
+\usepackage{adjustbox} % Used to constrain images to a maximum size 
+\usepackage{xcolor} % Allow colors to be defined
+\usepackage{enumerate} % Needed for markdown enumerations to work
+\usepackage{geometry} % Used to adjust the document margins
+\usepackage{amsmath} % Equations
+\usepackage{amssymb} % Equations
+\usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+\AtBeginDocument{%
+    \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+\usepackage{upquote} % Upright quotes for verbatim code
+\usepackage{eurosym} % defines \euro
+\usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+\usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+\usepackage{fancyvrb} % verbatim replacement that allows latex
+\usepackage{grffile} % extends the file name processing of package graphics 
+                     % to support a larger range 
+\usepackage{hyperref}  % The hyperref package gives us a pdf with properly built
+     		       % internal navigation ('pdf bookmarks' for the table of contents,
+    		       % internal cross-reference links, web links for URLs, etc.)
+\usepackage{longtable} % longtable support required by pandoc >1.10
+\usepackage{booktabs}  % table support for pandoc > 1.12.2
+\usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                            % normalem makes italics be italics, not underlines
+\usepackage{jupyter_latex}  % contains command and colors definitions 
+\usepackage{lipsum}
+    ((* endblock packages *))
+
+% Pygments definitions
+((( resources.latex.pygments_definitions )))
+
+    ((* block definitions *))
+% DOCUMENT PARAMETERS: TITLE, AUTHOR, DATE
+    ((* block title *))
+((( get_title() )))
+    ((* endblock title *))
+    ((* block author *))
+((( get_author() )))
+    ((* endblock author *))
+    ((* block date *))
+((( get_date() )))
+    ((* endblock date *))
+    ((* endblock definitions *))
+
+    ((* block commands *))
+\setlength{\abstractwidth}{\columnwidth}
+% Prevent overflowing lines due to hard-to-break entities
+\sloppy 
+% Setup hyperref package
+\hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+}
+((( edit_pdf_metadata() )))
+% Slightly bigger margins than the latex defaults
+    ((* block margins *))
+\geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    ((* endblock margins *))
+    ((* endblock commands *))
+((* endblock header *))
+
+((* block body *))
+\begin{document}
+    
+    ((* block predoc *))
+    ((* block maketitle *))
+\maketitle
+((* endblock maketitle *))
+    ((* block abstract *))
+((( make_abstract() )))
+    ((* endblock abstract *))
+    ((* endblock predoc *))
+
+((( super() )))
+
+    ((* block postdoc *))
+((( make_biblio() )))
+    ((* endblock postdoc *))
+\end{document}
+((* endblock body *))
+
+
+%===============================================================================
+% SUPPORT BLOCKS
+%===============================================================================
+
+% Displaying simple data text
+((* block data_text *))
+\begin{Verbatim}
+((( output.data['text/plain'] )))
+\end{Verbatim}
+((* endblock data_text *))
+
+% Display python error text as-is
+((* block error *))
+\begin{stream}
+((( super() )))
+\end{stream}
+((* endblock error *))
+
+((* block traceback_line *))
+((( line | indent | strip_ansi | escape_latex )))
+((* endblock traceback_line *))
+
+% Display stream ouput with coloring
+((* block stream *))
+\begin{stream}
+((( output.text | escape_latex | ansi2latex )))
+\end{stream}
+((* endblock stream *))
+
+% Display latex
+((* block data_latex -*))
+((( output.data['text/latex'] | citation2latex | strip_files_prefix | markdown2latex )))
+((* endblock data_latex *))
+
+% Display markdown
+((* block data_markdown -*))
+((( output.data['text/markdown'] | citation2latex | strip_files_prefix | markdown2latex )))
+((* endblock data_markdown *))
+
+% Default mechanism for rendering figures
+((*- block data_png -*))
+((( draw_figure(output.metadata.filenames['image/png'],cell) )))
+((*- endblock -*))
+((*- block data_jpg -*))
+((( draw_figure(output.metadata.filenames['image/jpeg'],cell) )))
+((*- endblock -*))
+((*- block data_svg -*))
+((( draw_figure(output.metadata.filenames['image/svg+xml'],cell) )))
+((*- endblock -*))
+((*- block data_pdf -*))
+((( draw_figure(output.metadata.filenames['application/pdf'],cell) )))
+((*- endblock -*))
+
+% Default code input by default dispalys nothing
+((* block input scoped *))
+((* endblock input *))
+
+% Default code output: redirect execute_result to display data priority.
+((* block execute_result scoped *))
+((*- for type in output.data | filter_data_type -*))
+    ((*- if type in ['text/plain']*))
+((( add_prompt(output.data['text/plain'],cell) )))
+    ((*- elif type in ['text/latex']*))
+((( add_table(output.data['text/latex'],cell) )))
+    ((*- endif -*))
+((*- endfor -*))
+((* endblock execute_result *))
+
+% Render markdown
+((* block markdowncell scoped *))
+((( add_markdown(cell) )))
+((* endblock markdowncell *))
+
+% Don't display unknown types
+((* block unknowncell scoped *))
+((* endblock unknowncell *))
+
+%===============================================================================
+% SUPPORT MACROS
+%===============================================================================
+
+% Add abstract and keywords
+((* macro make_abstract() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+\begin{center}
+((*- if nb.metadata["latex_metadata"]["abstract"]: -*))
+ \parbox{\abstractwidth}{
+     \section*{Abstract}
+     (((nb.metadata["latex_metadata"]["abstract"])))
+     }
+     \par\vspace{\abstractsep}
+((*- endif -*))
+((*- if nb.metadata["latex_metadata"]["keywords"]: -*))
+     \parbox{\abstractwidth}{\it Keywords: (((nb.metadata["latex_metadata"]["keywords"])))}
+     \par\vspace{\abstractsep}
+((*- endif -*))
+\end{center}
+%\end{@twocolumnfalse}]
+((*-endif-*))
+((*- endmacro *))
+
+% Draw a figure using the graphicx package.
+((* macro draw_figure(filename,cell) -*))
+((* set filename = filename | posix_path *))
+((*- block figure scoped -*))
+((= set figure height =))
+    ((*- if cell.metadata.height -*))
+    ((* set figheight = cell.metadata.height *))
+    ((*- else -*))
+    ((* set figheight = '\\textheight' *))
+    ((*- endif -*))
+((= set figure width and environment =))
+((*- if cell.metadata.wide -*))
+     ((*- if cell.metadata.width -*))
+     ((* set figwidth = cell.metadata.width *))
+     ((*- else -*))
+     ((* set figwidth = '\\textwidth' *))
+     ((*- endif -*))
+\begin{figure*}
+((*- else -*))
+     ((*- if cell.metadata.width -*))
+     ((* set figwidth = cell.metadata.width *))
+     ((*- else -*))
+     ((* set figwidth = '\\columnwidth' *))
+     ((*- endif -*))
+\begin{figure}
+((*-endif-*))
+((= insert rescaled image =))
+\centering
+\adjustimage{max size={(((figwidth)))}{(((figheight)))}}{((( filename )))}
+((= insert caption and label =))
+((( add_caption(cell) )))
+((= insert close environment =))
+((*- if cell.metadata.wide -*))
+\end{figure*}
+((*- else -*))
+\end{figure}
+((*-endif-*))
+((*- endblock figure -*))
+((*- endmacro *))
+
+% Add a table
+((* macro add_table(content,cell) -*))
+((= set table height =))
+    ((*- if cell.metadata.height -*))
+    ((* set height = cell.metadata.height *))
+    ((*- else -*))
+    ((* set height = '\\textheight' *))
+    ((*- endif -*))
+((= set table width and environment =))
+((*- if cell.metadata.wide -*))
+     ((*- if cell.metadata.width -*))
+     ((* set width = cell.metadata.width *))
+     ((*- else -*))
+     ((* set width = '\\textwidth' *))
+     ((*- endif -*))
+\begin{table*}
+((*- else -*))
+     ((*- if cell.metadata.width -*))
+     ((* set width = cell.metadata.width *))
+     ((*- else -*))
+     ((* set width = '\\columnwidth' *))
+     ((*- endif -*))
+\begin{table}
+((*-endif-*))
+((= insert rescaled table =))
+\centering
+\adjustbox{max size={(((width)))}{(((height)))}}{(((content)))}
+((= insert caption and label =))
+((( add_caption(cell) )))
+((= insert close environment =))
+((*- if cell.metadata.wide -*))
+\end{table*}
+((*- else -*))
+\end{table}
+((*-endif-*))
+((*- endmacro *))
+
+% Renders both input and output prompt in one block if ["show":true]
+((* macro add_prompt(text,cell) -*))
+\begin{coding}
+((( cell.source |highlight_code(strip_verbatim=True)|add_prompts(first=">>> ",cont="... ") )))
+((( text )))
+\end{coding}
+((*- endmacro *))
+
+% Create a caption and labels, applyed to figures and tables
+((* macro add_caption(cell) -*))
+((* if cell.metadata.caption: -*))
+\caption{
+((( cell.metadata.caption)))}
+((*- endif -*))
+((*- if cell.metadata.label -*))
+\label{((( cell.metadata.label)))} 
+((*- endif -*))
+((*- endmacro *))
+
+% Add markdown content unless ["hide":true] is used
+((* macro add_markdown(cell) -*))
+    ((*- if cell.metadata.hide: -*))
+    ((* else -*))
+((( cell.source | citation2latex | strip_files_prefix | markdown2latex )))
+    ((*- if cell.metadata.loremipsum: -*))
+\par
+\lipsum[(((cell.metadata.loremipsum)))]
+    ((*- endif -*))
+    ((*- endif -*))
+((*- endmacro *))
+

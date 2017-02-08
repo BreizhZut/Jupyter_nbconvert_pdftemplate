@@ -1,0 +1,262 @@
+
+
+
+
+    
+    
+\chapter[Classification in the Iris data set]{Classification in the Iris data set\\ A test example for {\tt Jupyter nbconvert}}
+    	  \epigraph{It is a million to one chances but it might just work.}{Dylan P. Tweed}
+
+    
+    
+\begin{center}
+\parbox{\abstractwidth}{\it
+This document is the result of a {\tt nbconvert --to pdf} test on a very simple {\tt ipython notebook}. Along with this abstract, title, author, affiliations, dates and keywords metadata are displayed. Furthermore this document should illustrate additional features; captions, labels, bibliography figures and tables rescaling, cells hiding. The orignal notebook was build so that to test multiple templates (see \href{https://github.com/BreizhZut/Jupyter_nbconvert_pdftemplate.git}{github.com/BreizhZut/Jupyter\_nbconvert\_pdftemplate}) corresponding to documentation, article, book and presentations formats.
+}
+\end{center}
+\par\vspace{\abstractsep}%\end{@twocolumnfalse}]     
+    
+    
+
+
+
+
+
+
+
+
+\section{Data}\label{data}
+
+The iris dataset is common test example for machine learning and can be
+found in the \texttt{datasets} packages of \texttt{R} or as in this
+instance the \texttt{sklearn} package in \texttt{python}. This data set
+was first published in \cite{Fisher1936}, in was further use for the
+purpose of testing machine learning classification algorithm such as in
+\cite{RoHart1973}, \cite{Dasarathy1980}.
+
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Number of Instances: 150 (50 in each of three classes)
+\item
+  Number of Attributes: 4 numeric, predictive attributes and the class
+
+  \begin{itemize}
+  \tightlist
+  \item
+    sepal length in cm
+  \item
+    sepal width in cm
+  \item
+    petal length in cm
+  \item
+    petal width in cm
+  \end{itemize}
+\item
+  class:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Iris-Setosa
+  \item
+    Iris-Versicolour
+  \item
+    Iris-Virginica
+  \end{itemize}
+\end{enumerate}
+
+
+\subsection{Data frames}\label{data-frames}
+
+The 3 class are indicated in the data as integers 0, 1 and 2:
+
+
+    	 \begin{coding}
+>>> \PY{c+c1}{\PYZsh{} This should appear everywhere}
+... \PY{n}{Counter}\PY{p}{(}\PY{n}{target}\PY{p}{)}
+Counter({0: 50, 1: 50, 2: 50})
+\end{coding}
+With the corresponding class names:
+
+
+    	 \begin{coding}
+>>> \PY{c+c1}{\PYZsh{} This should appear everywhere}
+... \PY{n+nb}{list}\PY{p}{(}\PY{n}{target\PYZus{}names}\PY{p}{)}
+['setosa', 'versicolor', 'virginica']
+\end{coding}
+We explore the first few element of the iris data set for each class:
+
+\begin{itemize}
+\tightlist
+\item
+  setosa encoded as 0 (see Table \ref{tab:hseto}),
+\item
+  versicolor encoded as 1 (see Table \ref{tab:hvers})
+\item
+  virginica encoded as 2 (see Table \ref{tab:hvirg}).
+\end{itemize}
+
+We note that the row are ordered by class. This is not important here,
+since we try to test reference to some tables but for machine learning
+tasks it is advised to shuffle the row both in the data and the target.
+
+
+    	 \begin{table}
+
+\centering
+\adjustbox{max size={\textwidth}{\textheight}}{\begin{tabular}{lrrrr}
+\toprule
+{} &  sepal length &  sepal width &  petal length &  petal width \\
+\midrule
+0 &           5.1 &          3.5 &           1.4 &          0.2 \\
+1 &           4.9 &          3.0 &           1.4 &          0.2 \\
+2 &           4.7 &          3.2 &           1.3 &          0.2 \\
+3 &           4.6 &          3.1 &           1.5 &          0.2 \\
+4 &           5.0 &          3.6 &           1.4 &          0.2 \\
+5 &           5.4 &          3.9 &           1.7 &          0.4 \\
+6 &           4.6 &          3.4 &           1.4 &          0.3 \\
+7 &           5.0 &          3.4 &           1.5 &          0.2 \\
+8 &           4.4 &          2.9 &           1.4 &          0.2 \\
+9 &           4.9 &          3.1 &           1.5 &          0.1 \\
+\bottomrule
+\end{tabular}
+}
+
+\caption{First ten rows corredsponding to the Setosa class}\customlabel{tab:hseto}{toto}
+\end{table}
+
+    	 \begin{table}
+
+\centering
+\adjustbox{max size={\textwidth}{\textheight}}{\begin{tabular}{lrrrr}
+\toprule
+{} &  sepal length &  sepal width &  petal length &  petal width \\
+\midrule
+50 &           7.0 &          3.2 &           4.7 &          1.4 \\
+51 &           6.4 &          3.2 &           4.5 &          1.5 \\
+52 &           6.9 &          3.1 &           4.9 &          1.5 \\
+53 &           5.5 &          2.3 &           4.0 &          1.3 \\
+54 &           6.5 &          2.8 &           4.6 &          1.5 \\
+55 &           5.7 &          2.8 &           4.5 &          1.3 \\
+56 &           6.3 &          3.3 &           4.7 &          1.6 \\
+57 &           4.9 &          2.4 &           3.3 &          1.0 \\
+58 &           6.6 &          2.9 &           4.6 &          1.3 \\
+59 &           5.2 &          2.7 &           3.9 &          1.4 \\
+\bottomrule
+\end{tabular}
+}
+
+\caption{First ten rows corresponding to the Versicolor class}\customlabel{tab:hvers}{toto}
+\end{table}
+
+    	 \begin{table}
+
+\centering
+\adjustbox{max size={0.5\columnwidth}{\textheight}}{\begin{tabular}{lrrrr}
+\toprule
+{} &  sepal length &  sepal width &  petal length &  petal width \\
+\midrule
+100 &           6.3 &          3.3 &           6.0 &          2.5 \\
+101 &           5.8 &          2.7 &           5.1 &          1.9 \\
+102 &           7.1 &          3.0 &           5.9 &          2.1 \\
+103 &           6.3 &          2.9 &           5.6 &          1.8 \\
+104 &           6.5 &          3.0 &           5.8 &          2.2 \\
+105 &           7.6 &          3.0 &           6.6 &          2.1 \\
+106 &           4.9 &          2.5 &           4.5 &          1.7 \\
+107 &           7.3 &          2.9 &           6.3 &          1.8 \\
+108 &           6.7 &          2.5 &           5.8 &          1.8 \\
+109 &           7.2 &          3.6 &           6.1 &          2.5 \\
+\bottomrule
+\end{tabular}
+}
+
+\caption{First ten rows corresponding to the Virginica class}\customlabel{tab:hvirg}{toto}
+\end{table}
+This text is a Lorem Ipsum, it should not appear in the documentation
+template, and should add a lorem ipsum in the chapter and article
+template. It should also appear in the beamer, to test the animation on
+the table above.\par
+\lipsum[1-4]
+
+\subsection{Visualization}\label{visualization}
+
+\begin{figure}
+
+\centering
+\adjustimage{max size={\textwidth}{0.65\textheight}}{iris_files/iris_21_0.pdf}
+
+\caption{Scatter plot sepal width as a function of the sepal lenght for the iris dataset. As the legend indicates, the color code corresponds to the class.}\customlabel{fig:scat0}{toto}
+\end{figure}
+This text is once again a Lorem Ipsum, it should appear \textbf{only in
+the article and chapter template}.\par
+\lipsum[5-6]
+
+\section{Model}\label{model}
+
+For fun were testing different classification models for the iris
+dataset using the Support Vector Classification (SVC) method. This
+exemple is taken from the\texttt{sklearn} documantation. We test the SVC
+methods with:
+
+\begin{itemize}
+\tightlist
+\item
+  a linear kernel (see Figure \ref{fig:svm_lin})
+\item
+  a Radial Basis Function kernel (RBF, see Figure \ref{fig:svm_rbf})
+\item
+  a degree 3 polynomial kernel (see Figure \ref{fig:svm_poly})
+\end{itemize}
+
+
+
+\subsection{Linear kernel SVC}\label{linear-kernel-svc}
+
+\begin{figure}
+
+\centering
+\adjustimage{max size={0.5\columnwidth}{\textheight}}{iris_files/iris_28_0.pdf}
+
+\caption{Same as Figure \ref{fig:scat0}. The shaded region correspond to the predictions of Linear SVC model.}\customlabel{fig:svm_lin}{toto}
+\end{figure}
+This text is a Lorem Ipsum, it should not appear in the documentation
+template, and should add a lorem ipsum in the chapter and article
+template. It should also appear in the beamer, to test the animation on
+the table above.\par
+\lipsum[7-8]
+
+\subsection{Radial basis function kernel
+SVC}\label{radial-basis-function-kernel-svc}
+
+\begin{figure}
+
+\centering
+\adjustimage{max size={0.75\columnwidth}{\textheight}}{iris_files/iris_31_0.pdf}
+
+\caption{Same as Figure \ref{fig:scat0}. The shaded region correspond to the predictions of SVC RBF model.}\customlabel{fig:svm_rbf}{toto}
+\end{figure}
+This text is once again a Lorem Ipsum, it should appear \textbf{only in
+the article and chapter template}.\par
+\lipsum[9-10]
+
+\subsection{Polynomial kernel SVC}\label{polynomial-kernel-svc}
+
+\begin{figure}
+
+\centering
+\adjustimage{max size={\textwidth}{\textheight}}{iris_files/iris_34_0.pdf}
+
+\caption{Same as Figure \ref{fig:scat0}. The shaded region correspond to the predictions of polynomial SVC model.}\customlabel{fig:svm_poly}{toto}
+\end{figure}
+This text is a Lorem Ipsum, it should appear \textbf{only in the article
+and chapter template}.\par
+\lipsum[1-3]
+
+
+
+
+    
+    

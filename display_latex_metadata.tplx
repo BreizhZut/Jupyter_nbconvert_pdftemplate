@@ -1,0 +1,227 @@
+((= 
+===========================================================================================
+Name : 
+Author: D. P Tweed
+Date : Feb, 2017
+------------------------------
+
+# Overview
+------------------------------
+This template is based on multiple original templates found in ~/anaconda/lib/python2.7/site-packages/nbconvert/templates/latex, namely
+* base.tplx
+* article.tplx
+* style_ipython.tplx
+
+# List of options and arguements:
+-------------------------------
+
+## To be applied in the notebook metadata
+
+* Document metadata to change title, author, date and affiliation
+
+"latex_metadata": {
+   "affiliation": "[Insert affiliation here]",
+   "title": "[Insert title here]",
+   "subtitle": "[Insert title here]",
+   "author": "[Insert name here]",
+   "date": "[Insert date here]",
+   "abstract":"[Inset abstract here]",
+   "keywords":"[Inset keywords here]",
+   "bibfile":"[Insert file.bib]",
+   "bibfile":"[Choose bibliography style]"s
+}
+
+===========================================================================================
+=))
+
+
+((*- extends 'display_priority.tplx' -*))
+
+((* macro edit_pdf_metadata() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+   ((*- if nb.metadata["latex_metadata"]["title"]: -*))
+     	  ((* set title = nb.metadata["latex_metadata"]["title"] *))
+   ((*- else -*))
+     	  ((* set title = '' *))
+   ((*- endif -*))
+   ((*- if nb.metadata["latex_metadata"]["author"]: -*))
+     	  ((* set author = nb.metadata["latex_metadata"]["author"] *))
+   ((*- else -*))
+     	  ((* set author = '' *))
+   ((*- endif *))
+   ((*- if nb.metadata["latex_metadata"]["subject"]: -*))
+     	  ((* set subject = nb.metadata["latex_metadata"]["subject"] *))
+   ((*- else -*))
+     	  ((* set subject = '' *))
+   ((*- endif *))
+   ((*- if nb.metadata["latex_metadata"]["keywords"]: -*))
+     	  ((* set keywords = nb.metadata["latex_metadata"]["keywords"] *))
+   ((*- else -*))
+     	  ((* set keywords = '' *))
+   ((*- endif *))
+\hypersetup{pdfinfo={
+   Author= (((author))),
+   Title= (((title))),
+   Subject= (((subject))),
+   Keywords=(((keywords)))
+}}
+((*- endif -*))
+((* endmacro *))
+
+((* macro get_title() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["title"]: -*))
+     	  ((* set title = nb.metadata["latex_metadata"]["title"] *))
+     ((*- else -*))
+     	  ((* set title = '[Insert Title]' *))
+     ((*- endif -*))
+     ((*- if nb.metadata["latex_metadata"]["subtitle"]: -*))
+     	  ((*- set subtitle = "\\\ "~ (nb.metadata["latex_metadata"]["subtitle"]) -*))
+     ((*- else -*)) 
+     	  ((* set subtitle = "" *))
+     ((*- endif -*))
+ ((*- else -*))
+     ((* set title = ( resources.metadata.name | ascii_only | escape_latex ) *))
+     ((* set subtitle = "" *))
+((*- endif -*))
+\title{(((title)))(((subtitle)))}
+((* endmacro *))
+
+((* macro get_shortlongtitle() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["title"]: -*))
+     	  ((* set title = nb.metadata["latex_metadata"]["title"] *))
+     ((*- else -*))
+     	  ((* set title = '[Insert Title]' *))
+     ((*- endif -*))
+     ((*- if nb.metadata["latex_metadata"]["subtitle"]: -*))
+     	  ((*- set subtitle = "\\\ "~ (nb.metadata["latex_metadata"]["subtitle"]) -*))
+     ((*- else -*)) 
+     	  ((* set subtitle = "" *))
+     ((*- endif -*))
+ ((*- else -*))
+     ((* set title = ( resources.metadata.name | ascii_only | escape_latex ) *))
+     ((* set subtitle = "" *))
+((*- endif -*))
+\title[(((title)))]{(((title)))(((subtitle)))}
+((* endmacro *))
+
+((* macro get_author() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["author"]: -*))
+     	  ((* set author = nb.metadata["latex_metadata"]["author"] *))
+     ((*- else -*))
+     	  ((* set author = "[Insert name here]" *))
+     ((*- endif *))
+     ((*- if nb.metadata["latex_metadata"]["affiliation"]: -*))
+     	  ((* set affiliation = "\\\ {\it \small "~nb.metadata["latex_metadata"]["affiliation"]~" }" *))	
+     ((*- else-*))
+     	  ((* set affiliation = ""*))
+     ((*-endif *))
+((*- else -*))
+     ((* set author = "" *))
+     ((* set affiliation = ""*))
+((*- endif -*))
+\author{(((author)))(((affiliation )))}
+((* endmacro *))
+
+((* macro get_shortlongauthor() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["author"]: -*))
+     	  ((* set author = nb.metadata["latex_metadata"]["author"] *))
+     ((*- else -*))
+     	  ((* set author = "[Insert name here]" *))
+     ((*- endif *))
+     ((*- if nb.metadata["latex_metadata"]["affiliation"]: -*))
+     	  ((* set affiliation = "\\\ {\it \small "~nb.metadata["latex_metadata"]["affiliation"]~" }" *))	
+     ((*- else-*))
+     	  ((* set affiliation = ""*))
+     ((*-endif *))
+((*- else -*))
+     ((* set author = "" *))
+     ((* set affiliation = ""*))
+((*- endif -*))
+\author[(((author)))]{(((author)))(((affiliation )))}
+((* endmacro *))
+
+((* macro split_author_institute() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["author"]: -*))
+     	  ((* set author = nb.metadata["latex_metadata"]["author"] *))
+     ((*- else -*))
+     	  ((* set author = "[Insert name here]" *))
+     ((*- endif *))
+     ((*- if nb.metadata["latex_metadata"]["affiliation"]: -*))
+     	  ((* set affiliation = "\\\ {\it \small "~nb.metadata["latex_metadata"]["affiliation"]~" }" *))	
+     ((*- else-*))
+     	  ((* set affiliation = ""*))
+     ((*-endif *))
+((*- else -*))
+     ((* set author = "" *))
+     ((* set affiliation = ""*))
+((*- endif -*))
+\author{(((author)))}
+\institute{(((affiliation )))}
+((* endmacro *))
+
+((* macro split_author_affiliation() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["author"]: -*))
+     	  ((* set author = nb.metadata["latex_metadata"]["author"] *))
+     ((*- else -*))
+     	  ((* set author = "[Insert name here]" *))
+     ((*- endif *))
+     ((*- if nb.metadata["latex_metadata"]["affiliation"]: -*))
+     	  ((* set affiliation = "\\\ {\it \small "~nb.metadata["latex_metadata"]["affiliation"]~" }" *))	
+     ((*- else-*))
+     	  ((* set affiliation = ""*))
+     ((*-endif *))
+((*- else -*))
+     ((* set author = "" *))
+     ((* set affiliation = ""*))
+((*- endif -*))
+\author{(((author)))}
+\affiliation{(((affiliation)))}
+((* endmacro *))
+
+((* macro get_date() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["date"]: -*))
+     	  ((* set date   = nb.metadata["latex_metadata"]["date"] *))
+     ((*- else -*))
+     	  ((* set date   = "\\today" *))
+     ((*- endif *)) 
+((*- else -*))
+     ((* set date   = "\\today" *))
+((*- endif -*))
+\date{(((date)))}
+((* endmacro *))
+
+((* macro make_biblio() *))
+((* block bibliography *))
+((( add_bibstyle() ))) 
+((( add_bibfile() )))    
+((* endblock bibliography *))
+((* endmacro *))
+
+((* macro add_bibstyle() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["bibstyle"]: -*))
+\bibliographystyle{(((nb.metadata["latex_metadata"]["bibstyle"])))}	
+     ((*- else -*))
+\bibliographystyle{apalike}
+     ((*- endif -*))
+((*- else -*))
+\bibliographystyle{apalike}
+((*- endif -*))
+((* endmacro *))
+
+((* macro add_bibfile() *))
+((*- if nb.metadata["latex_metadata"]: -*))
+     ((*- if nb.metadata["latex_metadata"]["bibfile"]: -*))
+\bibliography{(((nb.metadata["latex_metadata"]["bibfile"])))}
+     ((*- else -*))
+\bibliography{biblio}
+     ((*- endif -*))
+((*- endif -*))
+((* endmacro *))
